@@ -1,0 +1,940 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VEIL</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F0E8;
+  --bg2: #EDE8DF;
+  --bg3: #E3DDD3;
+  --ink: #1A1410;
+  --ink2: #4A4038;
+  --ink3: #8A7E72;
+  --red: #C13B2A;
+  --red-bg: #F5E8E5;
+  --green: #2A6B4A;
+  --green-bg: #E5F0EB;
+  --gold: #B07820;
+  --gold-bg: #F5EDD8;
+  --blue: #2A4A8A;
+  --blue-bg: #E5EBF5;
+  --pink: #8A2A5A;
+  --pink-bg: #F5E5EE;
+  --border: rgba(26,20,16,0.12);
+  --border2: rgba(26,20,16,0.22);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Syne', sans-serif;
+  min-height: 100dvh;
+}
+
+#app { min-height: 100dvh; display: flex; flex-direction: column; }
+.screen { display: none; flex-direction: column; min-height: 100dvh; }
+.screen.active { display: flex; }
+
+/* ── LANDING ── */
+#screen-landing {
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-deco {
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  border: 40px solid var(--bg3);
+  pointer-events: none;
+}
+.landing-deco2 {
+  position: absolute;
+  bottom: -80px; left: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 30px solid var(--bg2);
+  pointer-events: none;
+}
+
+.logo-wrap { text-align: center; margin-bottom: 2.5rem; position: relative; }
+.logo-eyebrow { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink3); margin-bottom: 10px; }
+.logo-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 5rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+.logo-title span { color: var(--red); }
+.logo-tagline { font-size: 12px; color: var(--ink3); margin-top: 10px; letter-spacing: 0.05em; }
+
+.landing-form { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 10px; }
+
+.inp {
+  background: #fff;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  padding: 14px 16px;
+  color: var(--ink);
+  font-size: 15px;
+  font-family: 'Syne', sans-serif;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.inp:focus { border-color: var(--ink); }
+.inp::placeholder { color: var(--ink3); }
+
+.btn {
+  padding: 14px 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.1s, opacity 0.15s;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--ink); color: var(--bg); width: 100%; }
+.btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--border2); width: 100%; }
+.btn-sm { padding: 10px 16px; font-size: 12px; }
+.btn-red { background: var(--red); color: #fff; }
+
+.or-line { display: flex; align-items: center; gap: 10px; }
+.or-line::before, .or-line::after { content:''; flex:1; height:1px; background: var(--border); }
+.or-line span { font-size: 11px; color: var(--ink3); letter-spacing: 0.1em; }
+
+.error-msg { color: var(--red); font-size: 12px; text-align: center; min-height: 16px; font-weight: 500; }
+
+/* ── LOBBY ── */
+#screen-lobby { padding: 1.5rem; gap: 1rem; background: var(--bg); }
+
+.room-code-display {
+  background: var(--ink);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--bg);
+}
+.code-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; color: rgba(245,240,232,0.5); }
+.code-val { font-family: 'DM Mono', monospace; font-size: 2.5rem; font-weight: 500; letter-spacing: 0.3em; color: #fff; }
+.code-hint { font-size: 11px; color: rgba(245,240,232,0.5); margin-top: 6px; }
+
+.sec-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); font-weight: 600; }
+
+.player-list { display: flex; flex-direction: column; gap: 6px; }
+.player-item {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.player-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--ink);
+  flex-shrink: 0;
+}
+.player-name { font-size: 14px; font-weight: 600; flex: 1; }
+.badge { margin-left: auto; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; font-weight: 700; }
+.badge-host { background: var(--ink); color: var(--bg); }
+.badge-you { background: var(--red-bg); color: var(--red); }
+
+/* ── GAME HEADER ── */
+.game-header {
+  background: var(--ink);
+  padding: 12px 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.game-logo { font-size: 1.1rem; font-weight: 800; letter-spacing: 0.15em; color: var(--bg); }
+.game-logo span { color: var(--red); }
+.round-badge { font-size: 11px; color: rgba(245,240,232,0.5); letter-spacing: 0.05em; }
+.timer-display { font-family: 'DM Mono', monospace; font-size: 1rem; font-weight: 500; color: var(--gold); }
+.timer-display.urgent { color: var(--red); }
+
+.phase-bar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 1.25rem;
+  font-size: 11px;
+  color: var(--ink3);
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: 0.04em;
+}
+.phase-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--ink3); flex-shrink: 0; }
+.phase-pip.active { background: var(--red); }
+.phase-pip.teal { background: var(--green); }
+
+.game-body { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+/* Leaderboard */
+.lb-wrap { display: flex; flex-direction: column; gap: 5px; }
+.lb-row {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+}
+.lb-row.me { border-color: var(--ink); background: var(--bg2); }
+.lb-rank { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink3); width: 18px; }
+.lb-name { font-size: 13px; font-weight: 600; flex: 1; }
+.lb-cards { font-size: 10px; color: var(--ink3); }
+.lb-pts { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; }
+.lb-pts.pos { color: var(--green); }
+.lb-pts.neg { color: var(--red); }
+.lb-pts.zero { color: var(--ink3); }
+
+/* Hand */
+.hand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 8px; }
+.card-item {
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.card-item:active { transform: scale(0.96); }
+.card-item.selected { border-color: var(--ink) !important; }
+
+.card-q { background: var(--blue-bg); border-color: rgba(42,74,138,0.2); }
+.card-e { background: var(--red-bg); border-color: rgba(193,59,42,0.2); }
+.card-s { background: var(--green-bg); border-color: rgba(42,107,74,0.2); }
+.card-b { background: var(--gold-bg); border-color: rgba(176,120,32,0.2); }
+.card-c { background: var(--pink-bg); border-color: rgba(138,42,90,0.2); }
+
+.card-type-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; font-weight: 700; }
+.card-q .card-type-label { color: var(--blue); }
+.card-e .card-type-label { color: var(--red); }
+.card-s .card-type-label { color: var(--green); }
+.card-b .card-type-label { color: var(--gold); }
+.card-c .card-type-label { color: var(--pink); }
+
+.card-title { font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 4px; color: var(--ink); }
+.card-text { font-size: 11px; color: var(--ink2); line-height: 1.45; }
+
+/* Target picker */
+.target-picker {
+  background: var(--bg2);
+  border: 1.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 1rem;
+}
+.target-picker-title { font-size: 11px; color: var(--ink3); margin-bottom: 10px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.target-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.target-btn {
+  padding: 8px 14px;
+  border-radius: 4px;
+  background: #fff;
+  border: 1.5px solid var(--border2);
+  color: var(--ink);
+  font-size: 13px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.target-btn:hover, .target-btn.selected { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.target-btn.ally { border-color: var(--green); }
+
+.throw-btn {
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: 4px;
+  padding: 13px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.throw-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Log */
+.log-feed { display: flex; flex-direction: column; gap: 4px; }
+.log-entry {
+  font-size: 12px;
+  color: var(--ink2);
+  padding: 6px 10px;
+  background: #fff;
+  border-radius: 4px;
+  border-left: 3px solid var(--border);
+}
+.log-entry.new { border-left-color: var(--red); color: var(--ink); font-weight: 500; }
+
+/* Bomb bar */
+.bomb-bar {
+  display: none;
+  background: var(--gold-bg);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 14px;
+  align-items: center;
+  gap: 10px;
+}
+.bomb-bar.active { display: flex; }
+.bomb-pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); animation: pulse 0.7s infinite; flex-shrink: 0; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(1.4)} }
+.bomb-text { font-size: 13px; color: var(--gold); flex: 1; font-weight: 700; }
+.bomb-timer-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--gold); }
+
+/* Toast */
+#toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: calc(100% - 2rem); max-width: 360px; }
+.toast {
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  animation: slideDown 0.2s ease;
+}
+.toast.red { background: var(--red); }
+.toast.green { background: var(--green); }
+.toast.gold { background: var(--gold); }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Modal */
+.modal-bg {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(26,20,16,0.6);
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+}
+.modal-bg.open { display: flex; }
+.modal-box {
+  background: var(--bg);
+  border: 2px solid var(--ink);
+  border-radius: 12px 12px 8px 8px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 80dvh;
+  overflow-y: auto;
+}
+.modal-title { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+.modal-body { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.modal-card-text {
+  background: #fff;
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.modal-input {
+  background: #fff;
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  padding: 12px 14px;
+  color: var(--ink);
+  font-size: 14px;
+  font-family: 'Syne', sans-serif;
+  width: 100%;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+.modal-input:focus { border-color: var(--ink); }
+
+/* Expose flash */
+.expose-flash {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(26,20,16,0.92);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+}
+.expose-flash.show { display: flex; }
+.expose-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); font-weight: 700; }
+.expose-card { background: var(--bg); border: 2px solid var(--red); border-radius: 10px; padding: 1.25rem; width: 100%; max-width: 300px; }
+.expose-timer { font-family: 'DM Mono', monospace; font-size: 3rem; color: #fff; font-weight: 500; }
+
+/* Game over */
+#screen-gameover { padding: 1.5rem; gap: 1.25rem; align-items: center; background: var(--bg); }
+.gameover-eyebrow { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); }
+.gameover-title { font-size: 2.5rem; font-weight: 800; text-align: center; letter-spacing: -0.02em; }
+.gameover-title span { color: var(--red); }
+
+.ranking-list { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 6px; }
+.rank-item {
+  display: flex; align-items: center; gap: 12px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.rank-item.loser { border-color: var(--red); background: var(--red-bg); border-width: 2px; }
+.rank-num { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; width: 26px; color: var(--ink3); }
+.rank-num.first { color: var(--gold); }
+.rank-name { flex: 1; font-size: 14px; font-weight: 700; }
+.rank-pts { font-family: 'DM Mono', monospace; font-size: 14px; }
+
+.dare-section { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 10px; }
+.dare-title { font-size: 14px; font-weight: 800; color: var(--red); }
+.dare-hint { font-size: 12px; color: var(--ink3); }
+.dare-textarea {
+  background: #fff;
+  border: 1.5px solid var(--border2);
+  border-radius: 6px;
+  padding: 12px;
+  color: var(--ink);
+  font-size: 14px;
+  font-family: 'Syne', sans-serif;
+  width: 100%;
+  outline: none;
+  resize: vertical;
+  min-height: 70px;
+}
+.dare-textarea:focus { border-color: var(--red); }
+
+.dare-result {
+  background: var(--red);
+  border-radius: 10px;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  color: #fff;
+  display: none;
+}
+.dare-result-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; margin-bottom: 8px; }
+.dare-result-text { font-size: 17px; font-weight: 700; line-height: 1.5; }
+
+.host-controls { padding: 0 1.25rem 1.25rem; }
+.throws-note { font-size: 11px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+.throws-note span { color: var(--ink); }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- LANDING -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-deco"></div>
+  <div class="landing-deco2"></div>
+  <div class="logo-wrap">
+    <div class="logo-eyebrow">Card Game · 5 Pemain</div>
+    <div class="logo-title">VE<span>I</span>L</div>
+    <div class="logo-tagline">kartu rahasia — harga nyata</div>
+  </div>
+  <div class="landing-form">
+    <input class="inp" id="inp-name" placeholder="Nama kamu" maxlength="20" autocomplete="off">
+    <button class="btn btn-primary" onclick="createRoom()">Buat Room Baru</button>
+    <div class="or-line"><span>atau</span></div>
+    <input class="inp" id="inp-code" placeholder="Kode room (6 digit)" maxlength="6" style="text-transform:uppercase;letter-spacing:0.15em;font-family:'DM Mono',monospace;" autocomplete="off">
+    <button class="btn btn-ghost" onclick="joinRoom()">Masuk Room</button>
+    <div class="error-msg" id="landing-err"></div>
+  </div>
+</div>
+
+<!-- LOBBY -->
+<div id="screen-lobby" class="screen">
+  <div style="padding:1.5rem;display:flex;flex-direction:column;gap:1rem;">
+    <div class="room-code-display">
+      <div class="code-label">Kode Room — Bagikan ke Teman</div>
+      <div class="code-val" id="lobby-code">------</div>
+      <div class="code-hint">Buka di browser masing-masing</div>
+    </div>
+    <div class="sec-label">Pemain (<span id="player-count">0</span>/5)</div>
+    <div class="player-list" id="player-list"></div>
+    <div id="lobby-wait" style="font-size:13px;color:var(--ink3);text-align:center;padding:0.5rem 0;">Menunggu host memulai...</div>
+    <button class="btn btn-primary" id="btn-start" style="display:none;" onclick="startGame()">Mulai Game →</button>
+    <div style="font-size:11px;color:var(--ink3);text-align:center;">Minimal 2 pemain · Maksimal 5 pemain</div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="screen-game" class="screen">
+  <div class="game-header">
+    <div class="game-logo">VE<span>I</span>L</div>
+    <div class="round-badge" id="round-badge">Ronde 1/5</div>
+    <div class="timer-display" id="timer-display">—</div>
+  </div>
+  <div class="phase-bar" id="phase-bar">
+    <div class="phase-pip" id="phase-pip"></div>
+    <span id="phase-text">Menunggu...</span>
+  </div>
+  <div class="game-body">
+    <div class="bomb-bar" id="bomb-bar">
+      <div class="bomb-pulse"></div>
+      <div class="bomb-text" id="bomb-text">Bom di tanganmu!</div>
+      <div class="bomb-timer-val" id="bomb-countdown">--</div>
+    </div>
+
+    <div>
+      <div class="sec-label" style="margin-bottom:8px;">Papan Skor</div>
+      <div class="lb-wrap" id="leaderboard"></div>
+    </div>
+
+    <div>
+      <div class="throws-note" style="margin-bottom:8px;">Kartumu — lempar tersisa: <span id="throws-left">2</span></div>
+      <div class="hand-grid" id="hand-grid"></div>
+    </div>
+
+    <div class="target-picker" id="target-picker" style="display:none;">
+      <div class="target-picker-title" id="target-picker-title">Pilih target:</div>
+      <div class="target-grid" id="target-grid"></div>
+      <br>
+      <button class="throw-btn" id="throw-confirm-btn" disabled onclick="confirmThrow()">Lempar →</button>
+    </div>
+
+    <div>
+      <div class="sec-label" style="margin-bottom:8px;">Log Kejadian</div>
+      <div class="log-feed" id="log-feed"></div>
+    </div>
+  </div>
+  <div class="host-controls" id="host-controls" style="display:none;">
+    <button class="btn btn-primary btn-sm" style="width:100%;" onclick="resolveRound()">Selesaikan Ronde →</button>
+  </div>
+</div>
+
+<!-- GAME OVER -->
+<div id="screen-gameover" class="screen">
+  <div style="padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;width:100%;">
+    <div class="gameover-eyebrow">Hasil Akhir</div>
+    <div class="gameover-title">Game<br><span>Over</span></div>
+    <div class="ranking-list" id="ranking-list"></div>
+    <div class="dare-section" id="dare-section">
+      <div class="dare-title" id="dare-section-title">Tulis dare untuk yang kalah!</div>
+      <div class="dare-hint" id="dare-hint">Dare kamu anonim — tidak ada yang tahu siapa yang submit.</div>
+      <textarea class="dare-textarea" id="dare-input" placeholder="Tulis dare yang seru..."></textarea>
+      <button class="btn btn-red" onclick="submitDare()">Kirim Dare</button>
+    </div>
+    <div class="dare-result" id="dare-result">
+      <div class="dare-result-label">Dare Terpilih</div>
+      <div class="dare-result-text" id="dare-result-text"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Modals -->
+<div class="modal-bg" id="modal-question">
+  <div class="modal-box">
+    <div class="modal-title">Pertanyaan Untukmu</div>
+    <div class="modal-card-text" id="modal-q-text"></div>
+    <div class="modal-body">Jawab jujur dan semua dengar. Atau skip dan −3 poin.</div>
+    <textarea class="modal-input" id="modal-q-answer" placeholder="Jawabanmu..."></textarea>
+    <button class="btn btn-primary" onclick="answerQuestion()">Jawab (+2 poin)</button>
+    <button class="btn btn-ghost" onclick="skipQuestion()" style="color:var(--red);border-color:var(--red);">Skip (−3 poin)</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-curse-reveal">
+  <div class="modal-box">
+    <div class="modal-title">Kutukan Terungkap!</div>
+    <div class="modal-card-text" id="modal-curse-text"></div>
+    <div class="modal-body" id="modal-curse-effect"></div>
+    <button class="btn btn-ghost" onclick="closeModal('modal-curse-reveal')">OK</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-bomb-pass">
+  <div class="modal-box">
+    <div class="modal-title">Oper Bom!</div>
+    <div class="modal-body">Pilih siapa yang kamu lempar bom ini. Hanya bisa dioper sekali!</div>
+    <div class="target-grid" id="bomb-pass-targets"></div>
+    <button class="btn btn-ghost" onclick="closeModal('modal-bomb-pass')" style="margin-top:4px;">Tahan sendiri</button>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<div class="expose-flash" id="expose-flash">
+  <div class="expose-label">Expose!</div>
+  <div style="font-size:12px;color:rgba(245,240,232,0.6);text-align:center;" id="expose-from-text"></div>
+  <div class="expose-card">
+    <div class="card-type-label" style="color:var(--red);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;font-weight:700;">Kartu Terekspos</div>
+    <div style="font-size:14px;font-weight:700;margin-bottom:4px;" id="expose-card-title"></div>
+    <div style="font-size:12px;color:var(--ink2);" id="expose-card-text"></div>
+  </div>
+  <div class="expose-timer" id="expose-timer">4</div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+let myId = null, myName = '', currentRoom = null, gameState = null;
+let selectedCardIndex = null, selectedTargetId = null;
+let currentQuestionCardId = null, pendingQuestionCard = null;
+let timerInterval = null, bombInterval = null, bombCard = null;
+let isHost = false;
+
+socket.on('connect', () => { myId = socket.id; });
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toast(msg, type = '', duration = 3500) {
+  const c = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), duration);
+}
+
+function setErr(msg) { document.getElementById('landing-err').textContent = msg; }
+
+function createRoom() {
+  const name = document.getElementById('inp-name').value.trim();
+  if (!name) return setErr('Masukkan namamu dulu.');
+  myName = name;
+  socket.emit('create_room', { name });
+}
+
+function joinRoom() {
+  const name = document.getElementById('inp-name').value.trim();
+  const code = document.getElementById('inp-code').value.trim().toUpperCase();
+  if (!name) return setErr('Masukkan namamu dulu.');
+  if (code.length !== 6) return setErr('Kode room harus 6 karakter.');
+  myName = name;
+  socket.emit('join_room', { code, name });
+}
+
+function startGame() { socket.emit('start_game'); }
+function resolveRound() { socket.emit('resolve_round'); }
+
+socket.on('room_created', ({ code }) => {
+  currentRoom = code; isHost = true;
+  document.getElementById('lobby-code').textContent = code;
+  show('screen-lobby');
+});
+
+socket.on('room_joined', ({ code }) => {
+  currentRoom = code;
+  document.getElementById('lobby-code').textContent = code;
+  show('screen-lobby');
+});
+
+socket.on('error', ({ msg }) => { setErr(msg); toast(msg, 'red'); });
+
+socket.on('state', (state) => {
+  gameState = state;
+  if (state.phase === 'lobby') renderLobby(state);
+  else if (state.phase === 'playing') renderGame(state);
+  else if (state.phase === 'dare') show('screen-gameover');
+});
+
+function renderLobby(state) {
+  show('screen-lobby');
+  const players = Object.values(state.players);
+  document.getElementById('player-count').textContent = players.length;
+  document.getElementById('player-list').innerHTML = players.map(p => `
+    <div class="player-item">
+      <div class="player-avatar">${p.name.charAt(0).toUpperCase()}</div>
+      <div class="player-name">${p.name}</div>
+      ${p.isHost ? '<span class="badge badge-host">Host</span>' : ''}
+      ${p.id === myId ? '<span class="badge badge-you">Kamu</span>' : ''}
+    </div>
+  `).join('');
+  const me = state.players[myId];
+  if (me?.isHost) {
+    isHost = true;
+    document.getElementById('btn-start').style.display = players.length >= 2 ? 'block' : 'none';
+    document.getElementById('lobby-wait').style.display = 'none';
+  } else {
+    document.getElementById('btn-start').style.display = 'none';
+    document.getElementById('lobby-wait').style.display = 'block';
+  }
+}
+
+function renderGame(state) {
+  show('screen-game');
+  document.getElementById('round-badge').textContent = `Ronde ${state.round}/${state.maxRounds}`;
+  const me = state.players[myId];
+  if (me) {
+    document.getElementById('throws-left').textContent = me.throwsLeft;
+    isHost = me.isHost;
+    document.getElementById('host-controls').style.display = isHost ? 'block' : 'none';
+  }
+  renderLeaderboard(state);
+  renderHand(state);
+  renderLog(state.log);
+}
+
+function renderLeaderboard(state) {
+  const sorted = Object.values(state.players).sort((a, b) => b.points - a.points);
+  document.getElementById('leaderboard').innerHTML = sorted.map((p, i) => {
+    const ptClass = p.points > 0 ? 'pos' : p.points < 0 ? 'neg' : 'zero';
+    const pts = p.points > 0 ? `+${p.points}` : String(p.points);
+    return `<div class="lb-row ${p.id === myId ? 'me' : ''}">
+      <span class="lb-rank">${i + 1}</span>
+      <span class="lb-name">${p.name}${p.id === myId ? ' <span style="font-size:10px;color:var(--ink3);font-weight:400">(kamu)</span>' : ''}</span>
+      <span class="lb-cards" style="margin-right:6px;">${p.cardCount}🃏</span>
+      ${p.shieldActive ? '<span style="font-size:12px;">🛡</span>' : ''}
+      <span class="lb-pts ${ptClass}">${pts}</span>
+    </div>`;
+  }).join('');
+}
+
+const CARD_CLS = { question:'card-q', expose:'card-e', shield:'card-s', bomb:'card-b', curse:'card-c' };
+const CARD_NAMES = { question:'Pertanyaan', expose:'Expose', shield:'Perisai', bomb:'Bom Waktu', curse:'Kutukan' };
+
+function renderHand(state) {
+  const hand = state.myHand || [];
+  const grid = document.getElementById('hand-grid');
+  if (!hand.length) { grid.innerHTML = '<div style="font-size:13px;color:var(--ink3);padding:1rem 0;">Tanganmu kosong.</div>'; return; }
+  grid.innerHTML = hand.map((card, i) => `
+    <div class="card-item ${CARD_CLS[card.type] || 'card-q'} ${selectedCardIndex === i ? 'selected' : ''}" onclick="selectCard(${i})">
+      <div class="card-type-label">${CARD_NAMES[card.type] || card.type}</div>
+      <div class="card-title">${card.title}</div>
+      <div class="card-text">${card.text}</div>
+    </div>
+  `).join('');
+}
+
+function selectCard(index) {
+  const card = (gameState?.myHand || [])[index];
+  if (!card) return;
+  if (card.type === 'question' && card.fromSomeone) { openQuestionModal(card); return; }
+  selectedCardIndex = index;
+  selectedTargetId = null;
+  showTargetPicker(card, card.type === 'shield');
+}
+
+function showTargetPicker(card, selfOnly) {
+  const picker = document.getElementById('target-picker');
+  const grid = document.getElementById('target-grid');
+  picker.style.display = 'block';
+  if (selfOnly) {
+    document.getElementById('target-picker-title').textContent = 'Perisai dipakai untuk dirimu sendiri.';
+    grid.innerHTML = `<button class="target-btn selected">Dirimu sendiri</button>`;
+    selectedTargetId = myId;
+    document.getElementById('throw-confirm-btn').disabled = false;
+    return;
+  }
+  document.getElementById('target-picker-title').textContent = `Lempar ke siapa?`;
+  const others = Object.values(gameState.players).filter(p => p.id !== myId);
+  const allyId = gameState.allyId;
+  grid.innerHTML = others.map(p => `
+    <button class="target-btn ${p.id === selectedTargetId ? 'selected' : ''} ${p.id === allyId ? 'ally' : ''}"
+      onclick="selectTarget('${p.id}')">
+      ${p.name}${p.id === allyId ? ' 🤝' : ''}
+    </button>
+  `).join('');
+  document.getElementById('throw-confirm-btn').disabled = !selectedTargetId;
+}
+
+function selectTarget(id) {
+  selectedTargetId = id;
+  if (gameState) showTargetPicker(gameState.myHand[selectedCardIndex], id === myId);
+  document.getElementById('throw-confirm-btn').disabled = false;
+}
+
+function confirmThrow() {
+  if (selectedCardIndex === null || selectedTargetId === null) return;
+  socket.emit('throw_card', { toId: selectedTargetId, cardIndex: selectedCardIndex });
+  selectedCardIndex = null; selectedTargetId = null;
+  document.getElementById('target-picker').style.display = 'none';
+  toast('Kartu dikirim!');
+}
+
+function renderLog(logs) {
+  if (!logs?.length) return;
+  document.getElementById('log-feed').innerHTML = [...logs].reverse().map((l, i) =>
+    `<div class="log-entry ${i === 0 ? 'new' : ''}">${l.msg}</div>`
+  ).join('');
+}
+
+socket.on('phase_change', ({ phase, round, duration }) => {
+  clearInterval(timerInterval);
+  const pip = document.getElementById('phase-pip');
+  const phaseText = document.getElementById('phase-text');
+  const timerEl = document.getElementById('timer-display');
+  if (phase === 'throw') {
+    pip.className = 'phase-pip active';
+    phaseText.textContent = `Ronde ${round} — Lempar kartumu!`;
+    let t = duration;
+    timerEl.textContent = `${t}s`;
+    timerInterval = setInterval(() => {
+      t--;
+      timerEl.textContent = `${t}s`;
+      timerEl.className = t <= 10 ? 'timer-display urgent' : 'timer-display';
+      if (t <= 0) { clearInterval(timerInterval); timerEl.textContent = '—'; }
+    }, 1000);
+  } else if (phase === 'reveal') {
+    pip.className = 'phase-pip teal';
+    phaseText.textContent = 'Fase reveal!';
+    let t = 15;
+    timerEl.textContent = `${t}s`;
+    timerInterval = setInterval(() => { t--; timerEl.textContent = `${t}s`; if (t <= 0) { clearInterval(timerInterval); timerEl.textContent = '—'; } }, 1000);
+  }
+});
+
+socket.on('bomb_alert', ({ target, targetName, duration, card }) => {
+  if (target === myId) {
+    bombCard = card;
+    document.getElementById('bomb-bar').classList.add('active');
+    document.getElementById('bomb-text').textContent = `Bom di tanganmu! — ${card.title}`;
+    let t = duration;
+    document.getElementById('bomb-countdown').textContent = `${t}s`;
+    clearInterval(bombInterval);
+    bombInterval = setInterval(() => {
+      t--;
+      document.getElementById('bomb-countdown').textContent = `${t}s`;
+      if (t <= 0) { clearInterval(bombInterval); document.getElementById('bomb-bar').classList.remove('active'); bombCard = null; }
+    }, 1000);
+    toast('Bom masuk! Oper sekarang!', 'gold', 4000);
+    openBombPassModal();
+  } else {
+    toast(`${targetName} kena bom! 💣`, 'gold');
+  }
+});
+
+socket.on('bomb_passed', ({ from, to }) => {
+  if (to === gameState?.players[myId]?.name) toast('Bom dioper ke kamu!', 'gold');
+  else toast(`${from} mengoper bom ke ${to}!`, 'gold');
+});
+
+socket.on('bomb_explode', () => {
+  clearInterval(bombInterval);
+  document.getElementById('bomb-bar').classList.remove('active');
+  bombCard = null;
+  toast('BOOM! Bom meledak! −5 poin', 'red', 4000);
+});
+
+function openBombPassModal() {
+  const grid = document.getElementById('bomb-pass-targets');
+  const others = Object.values(gameState?.players || {}).filter(p => p.id !== myId);
+  grid.innerHTML = others.map(p => `<button class="target-btn" onclick="passBomb('${p.id}','${p.name}')">${p.name}</button>`).join('');
+  document.getElementById('modal-bomb-pass').classList.add('open');
+}
+
+function passBomb(toId, name) {
+  socket.emit('pass_bomb', { toId });
+  closeModal('modal-bomb-pass');
+  toast(`Bom dioper ke ${name}!`, 'gold');
+}
+
+socket.on('expose_event', ({ from, target, card }) => {
+  document.getElementById('expose-from-text').textContent = `${from} memakai Expose pada ${target}`;
+  document.getElementById('expose-card-title').textContent = card.title;
+  document.getElementById('expose-card-text').textContent = card.text;
+  const flash = document.getElementById('expose-flash');
+  flash.classList.add('show');
+  let t = 4;
+  document.getElementById('expose-timer').textContent = t;
+  const iv = setInterval(() => { t--; document.getElementById('expose-timer').textContent = t; if (t <= 0) { clearInterval(iv); flash.classList.remove('show'); } }, 1000);
+});
+
+socket.on('answer_revealed', ({ playerName, answer }) => { toast(`${playerName}: "${answer}"`, 'green', 6000); });
+socket.on('curse_received', ({ from }) => { toast(`${from} mengirim Kutukan... efek belum terbuka.`, '', 5000); });
+socket.on('curse_reveal', ({ card, effect }) => {
+  document.getElementById('modal-curse-text').textContent = card.reveal;
+  document.getElementById('modal-curse-effect').textContent = effect >= 0 ? `+${effect} poin untukmu!` : `${effect} poin dikurangi.`;
+  document.getElementById('modal-curse-reveal').classList.add('open');
+});
+socket.on('curse_public', ({ playerName, reveal, effect }) => { toast(`Kutukan ${playerName}: ${reveal}`, effect >= 0 ? 'green' : 'red', 5000); });
+socket.on('overtime_alert', () => { toast('Skor terlalu dekat! Ronde overtime!', 'gold', 5000); });
+
+function openQuestionModal(card) {
+  pendingQuestionCard = card;
+  document.getElementById('modal-q-text').textContent = card.text;
+  document.getElementById('modal-q-answer').value = '';
+  document.getElementById('modal-question').classList.add('open');
+}
+
+function answerQuestion() {
+  if (!pendingQuestionCard) return;
+  const answer = document.getElementById('modal-q-answer').value.trim();
+  if (!answer) return;
+  socket.emit('answer_question', { cardId: pendingQuestionCard.id, answer });
+  closeModal('modal-question');
+  pendingQuestionCard = null;
+}
+
+function skipQuestion() {
+  if (!pendingQuestionCard) return;
+  socket.emit('skip_question', { cardId: pendingQuestionCard.id });
+  closeModal('modal-question');
+  pendingQuestionCard = null;
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+socket.on('game_over', ({ ranking, loserId, loserName }) => {
+  show('screen-gameover');
+  document.getElementById('ranking-list').innerHTML = ranking.map((p, i) => `
+    <div class="rank-item ${p.id === loserId ? 'loser' : ''}">
+      <div class="rank-num ${i === 0 ? 'first' : ''}">${i === 0 ? '★' : i + 1}</div>
+      <div class="rank-name">${p.name}${p.id === myId ? ' (kamu)' : ''}${p.id === loserId ? ' — dare!' : ''}</div>
+      <div class="rank-pts" style="color:${p.points >= 0 ? 'var(--green)' : 'var(--red)'}">${p.points > 0 ? '+' : ''}${p.points}</div>
+    </div>
+  `).join('');
+  if (loserId === myId) {
+    document.getElementById('dare-section-title').textContent = 'Kamu yang kalah! Tunggu dare...';
+    document.getElementById('dare-hint').textContent = '';
+    document.getElementById('dare-input').style.display = 'none';
+    document.querySelector('#dare-section .btn-red').style.display = 'none';
+  } else {
+    document.getElementById('dare-section-title').textContent = `Tulis dare untuk ${loserName}!`;
+  }
+});
+
+function submitDare() {
+  const dare = document.getElementById('dare-input').value.trim();
+  if (!dare) return;
+  socket.emit('submit_dare', { dare });
+  document.getElementById('dare-input').disabled = true;
+  document.querySelector('#dare-section .btn-red').disabled = true;
+  toast('Dare terkirim!');
+}
+
+socket.on('dare_selected', ({ dare }) => {
+  document.getElementById('dare-section').style.display = 'none';
+  document.getElementById('dare-result').style.display = 'block';
+  document.getElementById('dare-result-text').textContent = dare;
+  toast('Dare terpilih!', 'red', 5000);
+});
+
+document.getElementById('inp-code').addEventListener('input', function() { this.value = this.value.toUpperCase(); });
+document.getElementById('inp-name').addEventListener('keydown', e => { if (e.key === 'Enter') createRoom(); });
+document.getElementById('inp-code').addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(); });
+</script>
+</body>
+</html>
